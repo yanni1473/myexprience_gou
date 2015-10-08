@@ -1,0 +1,109 @@
+//验证邮政编码  
+    jQuery.validator.addMethod( "checkPost",function(value,element){     
+            var pattern =/^[0-9]{6}$/;  
+            if(value !=''){if(!pattern.exec(value)){return false;}};  
+            return true;   
+     } ,  "  <font color='red'>请输入有效的邮政编码！</font>" );     
+      
+  
+    //验证手机  
+    jQuery.validator.addMethod( "checkMobile",function(value,element){     
+         var reg0 = /^13\d{5,9}$/;  
+         var reg1 = /^15\d{5,9}$/;  
+         var reg2 = /^189\d{4,8}$/;  
+         var reg3 = /^0\d{10,11}$/;  
+         var my = false;  
+         if (reg0.test(value))my=true;  
+         if (reg1.test(value))my=true;  
+         if (reg2.test(value))my=true;  
+         if (reg3.test(value))my=true;  
+         if(value!=''){if(!my){return false;}};  
+        return true;   
+     } ,  "  <font color='red'>请输入有效的手机号码！</font>" );     
+  
+      
+    //验证邮箱  
+    jQuery.validator.addMethod( "checkEmail",function(value,element){     
+            var myreg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;  
+            if(value !=''){if(!myreg.test(value)){return false;}};  
+            return true;   
+     } ,  "  <font color='red'>请输入有效的E_mail！</font>" );   
+  
+    //验证固定电话  
+    jQuery.validator.addMethod( "checkTel",function(value,element){     
+        var pattern =/^(([0\+]\d{2,3}-)?(0\d{2,3})-)(\d{7,8})(-(\d{3,}))?$/;  
+        if(value!=''){if(!pattern.exec(value)){return false;}};  
+        return true;   
+    } ,  "  <font color='red'>请输入有效的固定电话！</font>" );      
+       
+      
+    //验证企业名称是否重复  
+    jQuery.validator.addMethod( "checkCompanyName",function(value,element){     
+        var a=true;  
+        jQuery.ajax({type:"get",url:"${contextPath}/tongManager/validatorCompanyName",  
+        async:false,cache:false,data:{ toinCompanyName:value,method:"get"},dataType:"html",scriptCharset:"UTF-8",success:function(s){  
+            if(s=="1"){  
+                a=false;  
+            }  
+        }});  
+        return a;  
+    } ,  "  <font color='red'>此企业(店)名称已经被占用！请您更换其它名称！</font>" );      
+      
+    $("#addCompanyForm").validate({  
+        errorPlacement:function (error, element){     
+            if(element.attr("type")=="checkbox"||element.attr("type")=="radio"){  
+                error.appendTo(element.parent());  
+            }else{  
+                error.appendTo(element.parent());  
+            }         
+        },  
+        rules: {  
+            toinCompanyName:{  
+                required: true,  
+                checkCompanyName:true  
+            },usinName:{  
+                required: true  
+            },usinSex:{  
+                required: true  
+            },usinZw:{  
+                required: true  
+            },toinCatalogId:{  
+                required: true  
+            },usinCounty:{  
+                required: true  
+            },usinQicq:{  
+                number: true  
+            },toinCompanyIntroduction:{  
+                maxlength:400  
+            },usinEmail:{  
+                checkEmail:true  
+            },usinTel:{  
+                checkTel : true  
+            },usinMobile:{  
+                checkMobile : true  
+            },usinPost :{  
+                checkPost : true  
+            }  
+        },  
+        messages: {  
+            toinCompanyName:{  
+                required: "  <font color='red'>公司（店）名称不能为空！</font>"  
+            },usinName:{  
+                required: "  <font color='red'>姓名不能为空！</font>"  
+            },usinSex:{  
+                required: "  <font color='red'>性别不能为空！</font>"  
+            },usinZw:{  
+                required: "  <font color='red'>职位不能为空！</font>"  
+            },toinCatalogId:{  
+                required: "  <font color='red'>黄叶分类不能为空！</font>"  
+            },usinCounty:{  
+                required: "  <font color='red'>所在县/区不能为空！</font>"  
+            },usinQicq:{  
+                number: "  <font color='red'>请输入合法的QQ号</font>"  
+            },usinMobile:{  
+                number: "  <font color='red'>请输入合法的手机号</font>"  
+            },toinCompanyIntroduction:{  
+                maxlength : "  <font color='red'>最多不能超过400个字</font>"  
+            }  
+        }  
+    });  
