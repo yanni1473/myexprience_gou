@@ -1,0 +1,14 @@
+日期选择器：jquery datepicker的使用
+参考链接：https://github.com/mugifly/jquery-simple-datetimepicker
+          http://www.helloweba.com/view-blog-168.html
+使用：
+
+js：
+$('#inviteTime').appendDtpicker({
+    locale: "cn",
+ minuteInterval: 10,
+ futureOnly: true,
+ closeOnSelected:true,
+});
+css：
+datetimepicker.less
