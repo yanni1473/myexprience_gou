@@ -1,0 +1,12 @@
+window.onload=font; 
+function font(){ 
+   if (screen.width <1024) 
+       document.styleSheets[0].addRule("body","font-size:12px;"); 
+   else if (screen.width ==1024) 
+         document.styleSheets[0].addRule("body","font-size:14px;"); 
+      else if (screen.width >1024) 
+           document.styleSheets[0].addRule("body","font-size:16px;"); 
+         else 
+             document.styleSheets[0].addRule("body","font-size:16px;"); 
+}
+
