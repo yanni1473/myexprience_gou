@@ -1,0 +1,132 @@
+首先介绍下$.ajax的参数
+
+                   type：请求方式 GET/POST
+
+                   url:请求地址
+
+                   async:布尔类型，默认为true 表示请求是否为异步，如果为false表示为同步。
+
+                   dataType：返回的数据类型
+
+                   jsonp：传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
+
+                   jsonpCallback：自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名，也可以写"?"，jQuery会自动为你处理数据
+
+                  success：调用成功执行的函数
+
+                  error：异常处理函数
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">     //一拍HR入口     if(document.getElementById("aside_pai_entry")){         //远程调用数据         jQuery.ajax({             url: 'http://pai.lagou.com/hr/inviteCount.json',             dataType: 'JSONP',             jsonpCallback: 'callBack',             success: function(result){                 if(result.success){                     $("#pai_chat").html(result.content.chat);                     $("#pai_accept").html(result.content.accept);                     $("#pai_arrange").html(result.content.arrange);                 }             }         });     }  </script>
+
+
+
+
+<script type="text/javascript">
+    var arr=jobids;
+    jobids = jobids.join(",");
+    var $icon1 = $("<i class='fl pos_icon_small'></i>");
+    var $icon2 = $("<i class='fl pos_icon_big'></i>");
+    function callback(data) {
+        for(var i=0,l=arr.length;i<l;i++){
+            var jobid=arr[i];
+            if(!data[jobid]) break;
+            switch(jobicons_type){
+                case 1:
+                    var item = $(".position_list li[data-jobid=" +  jobid + "]").find(".pli_top .position_name");
+                    item.append($icon1.clone());
+                    break;
+                case 2:
+                    var item = $(".recommend_list .rec_pos li[data-jobid=" +  jobid + "]").find(".rec_pos_l .row:eq(0)");
+                    item.append($icon1.addClass("rec_pos_icon").clone());
+                    break;
+                case 3:
+                    var item = $(".my_collections li[data-id=" +  jobid + "]").find(".co_item h2 a");
+                    item.append($icon1.clone().addClass("rec_pos_icon"));
+                    break;
+                case 4: 
+                    $("#container .content_l").append($icon2.clone());
+                    break;
+            }    
+        }
+    }
+    jQuery.ajax({
+        url:"http://c.lagou.com/icon/showIcon.json",
+        dataType: 'jsonp',
+        jsonp: 'callback',
+        data:{
+            type:"POSITION",
+            size:'big',
+            ids : jobids
+        }
+    }).done(function (data) {
+        callback && callback(data);
+    });
+</script>
+
+
+Same-Origin Policy”（同源策略）即JavaScript只能访问与包含它的文档在同一域下的内容。
+JSONP的缺点则是：它只支持GET请求而不支持POST等其它类型的HTTP请求；它只支持跨域HTTP请求这种情况，不能解决不同域的两个页面之间如何进行JavaScript调用的问题。
+
+$.ajax({
+05	    async:false,
+06	    url: http://跨域的dns/document!searchJSONResult.action,
+07	    type: "GET",
+08	    dataType: 'jsonp',
+09	    jsonp: 'jsoncallback',
+10	    data: qsData,
+11	    timeout: 5000,
+12	    beforeSend: function(){
+13	        //jsonp 方式此方法不被触发.原因可能是dataType如果指定为jsonp的话,就已经不是ajax事件了
+14	    },
+15	    success: function (json) {//客户端jquery预先定义好的callback函数,成功获取跨域服务器上的json数据后,会动态执行这个callback函数
+16	        if(json.actionErrors.length!=0){
+17	            alert(json.actionErrors);
+18	        }
+19	        genDynamicContent(qsData,type,json);
+20	    },
+21	    complete: function(XMLHttpRequest, textStatus){
+22	        $.unblockUI({ fadeOut: 10 });
+23	    },
+24	    error: function(xhr){
+25	        //jsonp 方式此方法不被触发.原因可能是dataType如果指定为jsonp的话,就已经不是ajax事件了
+26	        //请求出错处理
+27	        alert("请求出错(请检查相关度网络状况.)");
+28	    }
+29	});
+
+
+
+$.getJSON("http://跨域的dns/document!searchJSONResult.action?name1="+value1+"&jsoncallback=?",
+2	    function(json){
+3	    if(json.属性名==值){
+4	        // 执行代码
+5	    }
+6	});
+这种方式其实是上例$.ajax({..}) api的一种高级封装，有些$.ajax api底层的参数就被封装而不可见了。
+
+
+
+
+JSONP的最基本的原理是：动态添加一个<script>标签，而script标签的src属性是没有跨域的限制的。这样说来，这种跨域方式其实与ajax XmlHttpRequest协议无关了。
+
+
+如果设为dataType: 'jsonp'，这个$.ajax方法就和ajax XmlHttpRequest没什么关系了，取而代之的则是JSONP协议。JSONP是一个非官方的协议，它允许在服务器端集成Script tags返回至客户端，通过javascript callback的形式实现跨域访问
+
+JSONP是一种脚本注入(Script Injection)行为，所以有一定的安全隐患。
+
+
+
+
+
