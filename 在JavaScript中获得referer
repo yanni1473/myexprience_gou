@@ -1,0 +1,16 @@
+/**
+ * 获取HTTP请求的Referer
+ * @ishost 布尔类型 Referer为空时是否返回Host（网站首页地址）
+ */
+function get_http_referer(ishost) {
+    if (ishost === undefined) { ishost = true; }
+    if (document.referrer) {
+        return document.referrer;
+    } else {
+        if (ishost) {
+            return window.location.protocol + "//" + window.location.host;
+        } else {
+            return "";
+        }
+    }
+}
