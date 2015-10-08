@@ -1,0 +1,202 @@
+(function( $ ){
+$.fn.imglazyload = function( options ){
+ var o = $.extend({
+    attr  :   'lazy-src', 
+    container  :  window, 
+    event   :  'scroll',   
+    fadeIn      :   false,   
+    threshold  :  0, 
+    vertical  :  true 
+   }, options ),  
+   event = o.event,
+  vertical = o.vertical,
+  container = $( o.container ),
+  threshold = o.threshold, 
+  // 将jQuery对象转换成DOM数组便于操作
+  elems = $.makeArray( $(this) ), 
+  dataName = 'imglazyload_offset',   
+  OFFSET = vertical ? 'top' : 'left',
+  SCROLL = vertical ? 'scrollTop' : 'scrollLeft',   
+  winSize = vertical ? container.height() : container.width(),
+  scrollCoord = container[ SCROLL ](),
+  docSize = winSize + scrollCoord;
+
+ // 延迟加载的触发器 
+ var trigger = { 
+   init : function( coord ){
+   return coord >= scrollCoord && 
+                            coord <= ( docSize + threshold );
+  }, 
+   scroll : function( coord ){
+   var scrollCoord = container[ SCROLL ]();
+   return coord >= scrollCoord && 
+                    coord <= ( winSize + scrollCoord + threshold );
+  },
+
+  resize : function( coord ){
+   var scrollCoord = container[ SCROLL ](),
+    winSize = vertical ? 
+                            container.height() : 
+                            container.width();
+   return coord >= scrollCoord &&
+                   coord <= ( winSize + scrollCoord + threshold );
+  }
+ };
+
+ var loader = function( triggerElem, event ){
+  var i = 0,
+   isCustom = false,
+   isTrigger, coord, elem, $elem, lazySrc;
+
+  // 自定义事件只要触发即可，无需再判断
+  if( event ){
+   if( event !== 'scroll' && event !== 'resize' ){
+    isCustom = true;
+   }
+  }
+  else{
+   event = 'init';
+  }
+
+  for( ; i < elems.length; i++ ){ 
+   isTrigger = false;
+   elem = elems[i];
+   $elem = $( elem );
+   lazySrc = $elem.attr( o.attr );
+
+   if( !lazySrc || elem.src === lazySrc ){
+    continue;
+   }
+   // 先从缓存获取offset值，缓存中没有才获取计算值,
+   // 将计算值缓存，避免重复获取引起的reflow
+   coord = $elem.data( dataName );
+
+   if( coord === undefined ){
+    coord = $elem.offset()[ OFFSET ];
+    $elem.data( dataName, coord );
+   } 
+    isTrigger = isCustom || trigger[ event ]( coord );    
+    if( isTrigger ){
+    // 加载图片
+    elem.src = lazySrc;
+    if( o.fadeIn ){
+     $elem.hide().fadeIn();
+    }
+    // 移除缓存
+    $elem.removeData( dataName );
+    // 从DOM数组中移除该DOM
+    elems.splice( i--, 1 );
+   }
+  } 
+   // 所有的图片加载完后卸载触发事件
+  if( !elems.length ){
+   if( triggerElem ){
+    triggerElem.unbind( event, fire );
+   }
+   else{
+    container.unbind( o.event, fire );
+   }
+   $( window ).unbind( 'resize', fire );
+   elems = null;
+  }
+
+ };
+
+ var fire = function( e ){
+  loader( $(this), e.type );
+ };
+
+ // 绑定事件
+ container = event === 'scroll' ? container : $( this ); 
+ container.bind( event, fire );
+ $( window ).bind( 'resize', fire ); 
+  // 初始化
+ loader(); 
+  return this;
+}; 
+ })( jQuery );
+
+
+调用：
+
+$( 'img' ).imglazyload({
+ event : 'scroll',
+ attr : 'lazy-src'
+});
+默认的调用可以省略所有参数。
+
+复制代码代码如下:
+$( 'img' ).imglazyload();
+
+
+
+///////////////////////////////////////////
+目前我用的这个热点新闻主题由于有缩略图功能所以也试着加上看看效果如何。这里把这一功能应用到WordPress主题方法说一下，其实很简单，首先下载jquery.lazyloa.js，放到主题目录中，然后在header.php模板文件</head>标签前添加如下代码：
+
+<script type="text/javascript" src="<?php bloginfo('template_directory');?>/js/jquery.lazyload.js"></script>
+<script type="text/javascript">
+$(function() {
+$("img").lazyload({
+effect : "fadeIn"
+});
+});
+</script>
+其中img是延迟加载所有图片，也可以根据不同模板作相应改动，比如我这个主题，可以改成#post img，这样只延迟加载#post 容器内的图片，否则可能影响到侧边图片的加载，主要是留言者头像可能会最后加载；
+
+fadeIn是图片显示效果
+
+这样基本就可以了！
+
+如果上面的功能可能没有达到你的要求，还有几个选项可供设置。
+
+可以设置阀值来控制 灵敏度
+
+$(“img”).lazyload({ threshold : 200 });  
+把阀值设置成200 意思就是当图片没有看到之前先load 200像素。当然了你也可以通过设置占位符图片和自定事件来触发加载图片事件
+
+$("img").lazyload({   
+placeholder : "img/grey.gif",   
+event : "click"  
+});  
+还可以通过定义effect 参数来定义一些图片显示效果
+
+$("img").lazyload({   
+placeholder : "img/grey.gif",   
+effect : "fadeIn"  
+});  
+事件触发加载，事件可以是任何 jQuery 时间, 如: click 和 mouseover. 你还可以使用自定义的事件, 如: sporty 和 foobar. 默认情况下处于等待状态, 直到用户滚动到窗口上图片所在位置. 在灰色占位图片被点击之前阻止加载图片, 你可以这样做:
+
+$("img").lazyload({   
+placeholder : "img/grey.gif",   
+event : "click"  
+});  
+延迟加载图片，Lazy Load 插件的一个不完整的功能, 但是这也能用来实现图片的延迟加载. 下面的代码实现了页面加载完成后再加载. 页面加载完成 5 秒后, 指定区域内的图片会自动进行加载.
+
+$(function() {   
+$("img:below-the-fold").lazyload({   
+placeholder : "img/grey.gif",   
+event : "sporty"  
+});   
+});   
+$(window).bind("load", function() {   
+var timeout = setTimeout(function() {$("img").trigger("sporty")}, 5000);   
+});  
+图片在容器里面你可以将插件用在可滚动容器的图片上, 例如带滚动条的 DIV 元素. 你要做的只是将容器定义为 jQuery 对象并作为参数传到初始化方法里面.
+
+CSS
+
+#container {   
+height: 600px;   
+overflow: scroll;   
+}  
+JavaScript 代码:
+
+$("img").lazyload({   
+placeholder : "img/grey.gif",   
+container: $("#container")   
+});  
+当图片不顺序排列,滚动页面的时候, Lazy Load 会循环为加载的图片. 在循环中检测图片是否在可视区域内. 默认情况下在找到第一张不在可见区域的图片时停止循环. 图片被认为是流式分布的, 图片在页面中的次序和 HTML 代码中次序相同. 但是在一些布局中, 这样的假设是不成立的. 不过你可以通过 failurelimit 选项来控制加载行为.
+
+$("img").lazyload({   
+failurelimit : 10   
+});  
