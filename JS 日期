@@ -1,0 +1,66 @@
+返回当日的日期和时间
+如何使用 Date() 方法获得当日的日期。
+getTime()
+getTime() 返回从 1970 年 1 月 1 日至今的毫秒数。
+setFullYear()
+如何使用 setFullYear() 设置具体的日期。
+toUTCString()
+如何使用 toUTCString() 将当日的日期（根据 UTC）转换为字符串。
+getDay()
+如何使用 getDay() 和数组来显示星期，而不仅仅是数字。
+显示一个钟表
+如何在网页上显示一个钟表
+
+
+
+document.write(Date())
+
+var d=new Date();
+document.write("从 1970/01/01 至今已过去 " + d.getTime() + " 毫秒");
+
+
+var d = new Date()
+d.setFullYear(1992,10,3)
+document.write(d)
+
+
+var d=new Date()
+var weekday=new Array(7)
+weekday[0]="星期日"
+weekday[1]="星期一"
+weekday[2]="星期二"
+weekday[3]="星期三"
+weekday[4]="星期四"
+weekday[5]="星期五"
+weekday[6]="星期六"
+
+document.write("今天是" + weekday[d.getDay()])
+
+
+
+function startTime()
+{
+var today=new Date()
+var h=today.getHours()
+var m=today.getMinutes()
+var s=today.getSeconds()
+// add a zero in front of numbers<10
+m=checkTime(m)
+s=checkTime(s)
+document.getElementById('txt').innerHTML=h+":"+m+":"+s
+t=setTimeout('startTime()',500)
+}
+
+function checkTime(i)
+{
+if (i<10) 
+  {i="0" + i}
+  return i
+}
+
+
+
+
+
+var myDate=new Date()
+myDate.setDate(myDate.getDate()+5)
