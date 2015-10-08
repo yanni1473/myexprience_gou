@@ -1,0 +1,42 @@
+window.navigator 对象包含有关访问者浏览器的信息。
+实例
+
+
+
+<div id="example"></div>
+
+<script>
+
+txt = "<p>Browser CodeName: " + navigator.appCodeName + "</p>";
+txt+= "<p>Browser Name: " + navigator.appName + "</p>";
+txt+= "<p>Browser Version: " + navigator.appVersion + "</p>";
+txt+= "<p>Cookies Enabled: " + navigator.cookieEnabled + "</p>";
+txt+= "<p>Platform: " + navigator.platform + "</p>";
+txt+= "<p>User-agent header: " + navigator.userAgent + "</p>";
+txt+= "<p>User-agent language: " + navigator.systemLanguage + "</p>";
+
+document.getElementById("example").innerHTML=txt;
+
+</script>
+
+
+
+<html>
+<head>
+<script type="text/javascript">
+function disp_prompt()
+  {
+  var name=prompt("请输入您的名字","Bill Gates")
+  if (name!=null && name!="")
+    {
+    document.write("你好！" + name + " 今天过得怎么样？")
+    }
+  }
+</script>
+</head>
+<body>
+
+<input type="button" onclick="disp_prompt()" value="显示提示框" />
+
+</body>
+</html>
