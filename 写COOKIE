@@ -1,0 +1,27 @@
+var cookieName = "paiRecTip";
+        var wrapper = $('#activityBannerWrapper');
+        //检测cookie，显示
+        if (!($.cookie(cookieName)) || $.cookie(cookieName) != '0') {
+            wrapper.show();
+        }
+        //点击关闭，则设置cookie;
+        var btnClose = wrapper.find('.btn-close');
+        btnClose.on('click', function () {
+            wrapper.hide();
+            $.cookie(cookieName, '0', {expires: 365})
+        });
+
+
+
+    var cookieName1 = "plusRecTip";
+        var wrapper1 = $('#activityBanner1Wrapper');
+        //检测cookie，显示
+        if (!($.cookie(cookieName1)) || $.cookie(cookieName1) != '0') {
+            wrapper1.show();
+        }
+        //点击关闭，则设置cookie;
+        var btnClose1 = wrapper1.find('.btn-close');
+        btnClose1.on('click', function () {
+            wrapper1.hide();
+            $.cookie(cookieName1, '0', {expires: 365})
+        })
